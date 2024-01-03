@@ -1,7 +1,6 @@
 #!/bin/bash
 
-rm *.gcov
-rm coverage.info
-rm -r ./coverage_report
-rm -r ./build
-mkdir build
+rm -f *.gcov
+rm -f coverage.info
+rm -rf ./coverage_report
+rm -rf ./build

@@ -1,0 +1,23 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build-dbg",
+            "type": "shell",
+            "command": "./build-dbg.sh",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "build-tests-dbg",
+            "type": "shell",
+            "command": "./cleanup.sh && ./build-run.sh -f tests/tests.cpp -d",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
