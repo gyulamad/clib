@@ -11,7 +11,11 @@ using namespace std;
 
 namespace clib {
 
-    vector<string> file_find_by_extension(const filesystem::path& folder = ".", const string& pattern = "") {
+    string file_extension_with_dot(const string& extension) {
+        return extension[0] == 0 ? "" : ((extension[0] == '.' ? "" : ".") + extension);
+    }
+
+    vector<string> file_find_by_extension(const string& folder = ".", const string& extension = "") {
         vector<string> files;
 
         for (const auto& entry : filesystem::directory_iterator(folder)) {
@@ -19,15 +23,18 @@ namespace clib {
             if (
                 (entry.is_directory() || entry.is_regular_file()) && 
                 (
-                    pattern.empty() || 
-                    entry.path().filename().string().find(pattern) != string::npos
+                    extension.empty() || 
+                    str_ends_with(
+                        file_extension_with_dot(extension), 
+                        entry.path().filename().string()
+                    )
                 )
             ) {
                 // cout << "FILE:" << entry.path() << endl;
                 files.push_back(entry.path().string());
             } else if (entry.is_directory()) {
                 // Recursively search in subdirectories
-                vector<string> subs = file_find_by_extension(entry.path(), pattern);
+                vector<string> subs = file_find_by_extension(entry.path(), extension);
                 files.insert(files.end(), subs.begin(), subs.end());
             }
         }
@@ -35,19 +42,15 @@ namespace clib {
         return files;
     }
 
-    vector<string> file_find_by_extensions(const filesystem::path& folder, const vector<string>& patterns) {
+    vector<string> file_find_by_extensions(const string& folder, const vector<string>& extensions) {
         vector<string> files;
 
-        for (const string& pattern : patterns) {
-            vector<string> matches = file_find_by_extension(folder, pattern);
+        for (const string& extension : extensions) {
+            vector<string> matches = file_find_by_extension(folder, extension);
             files.insert(files.end(), matches.begin(), matches.end());
         }
 
         return files;
-    }
-
-    string file_extension_with_dot(const string& extension) {
-        return extension[0] == 0 ? "" : ((extension[0] == '.' ? "" : ".") + extension);
     }
 
     string file_replace_extension(const string& filename, const string& extension) {
@@ -64,6 +67,18 @@ namespace clib {
         // If there's no dot in the file name or the dot is at the end,
         // simply append the extension with a leading dot if needed
         return filename + file_extension_with_dot(extension);
+    }
+
+    string file_get_extension(const string& filename) { //  TODO: tests
+        size_t lastDotPos = filename.find_last_of('.');
+        
+        // Check if the lastDotPos is not at the end of the filename
+        if (lastDotPos != string::npos && lastDotPos != filename.length() - 1) {
+            return filename.substr(lastDotPos + 1);
+        }
+
+        // If there's no dot in the file name or the dot is at the end, return an empty string
+        return "";
     }
 
     bool file_exists(const string& filePath) {
@@ -119,5 +134,9 @@ namespace clib {
 
         file << data;
         file.close();
+    }
+
+    bool is_dir(const string& path) {
+        return std::filesystem::is_directory(path);
     }
 }

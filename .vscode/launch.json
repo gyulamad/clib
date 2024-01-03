@@ -9,7 +9,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/build",  // Replace with your executable path
-            "args": ["-f", "tests/tests.cpp"],  // Optional: Specify program arguments here
+            "args": ["-i", "./tests/", "-e"],  // Optional: Specify program arguments here
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],

@@ -4,6 +4,7 @@
 #include "FilesTests.hpp"
 #include "LogTests.hpp"
 #include "SysTests.hpp"
+#include "VectorsTests.hpp"
 
 int main() {
 
@@ -41,6 +42,8 @@ int main() {
     LogTests::test_Log_writeln();
 
     SysTests::test(); // TODO
+
+    VectorsTests::test(); // TODO
 
     // TODO: coverage
 
