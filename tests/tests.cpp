@@ -1,10 +1,13 @@
-#include "ArgsTests.hpp"
-#include "StrTests.hpp"
-#include "TimeTests.hpp"
-#include "FilesTests.hpp"
-#include "LogTests.hpp"
-#include "SysTests.hpp"
-#include "VectorsTests.hpp"
+#include "clib/ArgsTests.hpp"
+#include "clib/StrTests.hpp"
+#include "clib/TimeTests.hpp"
+#include "clib/FilesTests.hpp"
+#include "clib/LogTests.hpp"
+#include "clib/SysTests.hpp"
+#include "clib/VectorsTests.hpp"
+
+#include "src/CSrcTests.hpp"
+#include "src/IExecTests.hpp"
 
 int main() {
 
@@ -44,6 +47,11 @@ int main() {
     SysTests::test(); // TODO
 
     VectorsTests::test(); // TODO
+
+    cout << "Running builder tests..." << endl;
+
+    CSrcTests::test(); // TODO
+    IExecTests::test(); // TODO
 
     // TODO: coverage
 

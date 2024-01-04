@@ -3,8 +3,8 @@
 #include <cassert>
 #include <unistd.h>
 
-#include "../src/files.hpp"
-#include "../src/Log.hpp"
+#include "../../clib/files.hpp"
+#include "../../clib/Log.hpp"
 
 using namespace clib;
 

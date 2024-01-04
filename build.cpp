@@ -1,71 +1,15 @@
 #include <iostream>
-#include "src/args.hpp"
-#include "src/Log.hpp"
-#include "src/files.hpp"
-#include "src/sys.hpp"
-#include "src/vectors.hpp"
+
+#include "clib/args.hpp"
+#include "clib/Log.hpp"
+#include "clib/files.hpp"
+#include "clib/sys.hpp"
+#include "clib/vectors.hpp"
+
+#include "src/csrc.hpp"
+#include "src/iexec.hpp"
 
 using namespace clib;
-
-void csrc_collect_deps(
-    const string& filename, vector<string>& deps,
-    const string& hExtension, const vector<string>& cppExtensions
-) {
-    //cout << "Collect dependencies of: " COLOR_FILENAME << filename << COLOR_DEFAULT << endl;
-    vector<string> matches;
-    string contents = file_get_contents(filename);
-    if (!regx_match_all("\\n\\s*\\#include\\s*\"(.*)\"", contents, &matches)) return;
-    for (size_t i = 1; i < matches.size(); i += 2) {
-        string filepath = path_normalize(__DIR__ + "/" + path_extract(filename) + "/" + matches[i]);
-        if (vector_contains(deps, filepath)) continue;
-        deps.push_back(filepath);
-        if (str_ends_with(hExtension, filepath)) {
-            for (const string& cppExtension: cppExtensions) {
-                string cppFile = file_replace_extension(filepath, cppExtension);
-                if (file_exists(cppFile)) {
-                    if (vector_contains(deps, filepath)) continue;
-                    deps.push_back(cppFile);
-                }
-            }
-        }
-        csrc_collect_deps(filepath, deps, hExtension, cppExtensions);
-    }
-    vector_unique(deps);
-}
-
-ms_t csrc_get_lst_mtime(
-    const string& filename,
-    const string& hExtension,
-    const vector<string>& cppExtensions,
-    vector<string>& dependencies
-) {
-    ms_t lastModAt = file_get_mtime(filename);
-    csrc_collect_deps(filename, dependencies, hExtension, cppExtensions);
-    for (const string& dependency: dependencies) {
-        ms_t depLastModAt = file_get_mtime(dependency);
-        if (depLastModAt > lastModAt) lastModAt = depLastModAt;
-    }
-    return lastModAt;
-}
-
-bool iexec(const string& cmd) {
-    cout << COLOR_INFO "Execute command:" COLOR_DEFAULT " $ " << cmd << endl;
-    string output = exec(cmd);    
-    if (!output.empty()) {
-        string replaced = output;
-        replaced = str_replace(replaced, "error:", COLOR_ERROR "error:" COLOR_DEFAULT);
-        cout << replaced << endl;
-        if (replaced != output) {
-            LOGE("Command output contains error(s).");
-            return false;
-        }
-    }
-    if (exec_last_exit_code != 0) {
-        LOGE("Command exit code is non-zero: " + to_string(exec_last_exit_code));
-        return false;
-    }
-    return true;
-}
 
 string args_get_flags(const args_t& args) {
     return args_get(args, "flags", 
@@ -168,7 +112,7 @@ string compile_cpp_file(const args_t& args, vector<string>& dependencies) {
 
     if (
         file_exists(outputFilename) && file_get_mtime(outputFilename) >=
-            csrc_get_lst_mtime(inputFilename, hExtension, cppExtensions, dependencies)
+            csrc_get_lst_mtime(__DIR__, inputFilename, hExtension, cppExtensions, dependencies)
     ) {
         cout 
             << COLOR_INFO "File already built (skip): "
@@ -192,14 +136,14 @@ string compile_cpp_file(const args_t& args, vector<string>& dependencies) {
     return outputFilename;
 }
 
-string link_to_executable(const args_t args, const string& outputFilename, const vector<string>& objects) {
+string link_to_executable(const args_t args, const string& object, const vector<string>& dep_objects) {
     const string executableFilename = args_get_executable_filename(args);
     const string libs = args_get_libs(args);
 
     const string arguments = get_build_arguments(args);
 
     iexec(
-        "g++ " + arguments + " " + outputFilename + " " + str_concat(objects, " ") + 
+        "g++ " + arguments + " " + object + " " + str_concat(dep_objects, " ") + 
         " -o " + executableFilename 
         + (libs != "" ? " " + libs : "")
     );

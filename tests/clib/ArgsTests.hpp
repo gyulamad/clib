@@ -4,8 +4,8 @@
 #include <string>
 #include <cassert>
 
-#include "../src/str.hpp"
-#include "../src/args.hpp"
+#include "../../clib/str.hpp"
+#include "../../clib/args.hpp"
 
 using namespace std;
 using namespace clib;

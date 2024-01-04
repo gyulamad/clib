@@ -1,1 +1,3 @@
-./cleanup.sh && ./build-run.sh [OPTIONS]
+build and run tests
+
+./cleanup.sh && ./build-run.sh -i ./tests/ -e

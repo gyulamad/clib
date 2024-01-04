@@ -8,7 +8,7 @@
 #include <fstream>
 #include <sys/stat.h>
 
-#include "../src/files.hpp"
+#include "../../clib/files.hpp"
 
 using namespace std;
 using namespace clib;
