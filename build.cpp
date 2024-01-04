@@ -5,6 +5,7 @@
 #include "clib/files.hpp"
 #include "clib/sys.hpp"
 #include "clib/vectors.hpp"
+#include "clib/maps.hpp"
 
 #include "src/csrc.hpp"
 #include "src/iexec.hpp"
@@ -106,6 +107,14 @@ string compile_cpp_file(const args_t& args, vector<string>& dependencies) {
     const vector<string> cppExtensions = args_get_cpp_extensions(args);
     const string includePaths = args_get_include_paths(args);
 
+    if (inputFilename.empty())
+        throw ERROR("Input file is missing");
+
+    if (!file_exists(inputFilename))
+        throw ERROR("Input file is not found: " COLOR_FILENAME + inputFilename + COLOR_DEFAULT);
+
+    if (is_dir(inputFilename))
+        throw ERROR("Input file can not be a folder: " COLOR_FILENAME + inputFilename + COLOR_DEFAULT);
 
     const string outputFilename = path_normalize(outputFolder + "/" +
         file_replace_extension(inputFilename, outputExtension));
@@ -143,7 +152,7 @@ string link_to_executable(const args_t args, const string& object, const vector<
     const string arguments = get_build_arguments(args);
 
     iexec(
-        "g++ " + arguments + " " + object + " " + str_concat(dep_objects, " ") + 
+        "g++ " + arguments + " " + object + (dep_objects.empty() ? "" : " " + str_concat(dep_objects, " ")) + 
         " -o " + executableFilename 
         + (libs != "" ? " " + libs : "")
     );
@@ -151,7 +160,17 @@ string link_to_executable(const args_t args, const string& object, const vector<
     return executableFilename;
 }
 
-void build_file(const args_t& args) {
+void execute_file(const args_t& args, const string& executableFilename) {
+    const bool coverage = args_get_coverage(args);
+
+    iexec(executableFilename);
+    if (coverage) iexec(
+        "lcov -c -d . -o coverage.info && "
+        "genhtml coverage.info -o coverage_report && "
+        "google-chrome ./coverage_report/index.html");
+}
+
+string build_file(const args_t& args) {
     const bool execute = args_get_execute(args);
     const bool coverage = args_get_coverage(args);
     const vector<string> cppExtensions = args_get_cpp_extensions(args);
@@ -170,27 +189,33 @@ void build_file(const args_t& args) {
 
     string executableFilename = link_to_executable(args, outputFilename, objects);
 
-    if (execute || coverage) {
-        iexec(executableFilename);
-        if (coverage) iexec(
-            "lcov -c -d . -o coverage.info && "
-            "genhtml coverage.info -o coverage_report && "
-            "google-chrome ./coverage_report/index.html");
-    }
+    if (execute || coverage) execute_file(args, executableFilename);
+
+    return executableFilename;
 }
 
-void build_files(const args_t& args, const string& inputFolder) {
+vector<string> build_files(const args_t& args, const string& inputFolder) {
     const vector<string> cppExtensions = args_get_cpp_extensions(args);
     const bool execute = args_get_execute(args);
+    const bool coverage = args_get_coverage(args);
 
     const vector<string> inputFilenames = file_find_by_extensions(inputFolder, cppExtensions);
-    if (execute && inputFilenames.size() != 1) 
-        throw ERROR("Couldn't choose what to execute if the input is a folder and not only one C++ file in it.");
     args_t prj_args = args;
+    vector<string> executableFilenames;
     for (const string& inputFilename: inputFilenames) {
         prj_args["input-filename"] = inputFilename;
-        build_file(prj_args);
+        map_remove<args_key_t, args_val_t>(prj_args, "execute");
+        executableFilenames.push_back(build_file(prj_args));
     }
+
+    if (execute || coverage) {
+        if (executableFilenames.size() != 1) 
+            throw ERROR("Couldn't choose what to execute if the input is a folder and not only one C++ file in it.");
+        
+        execute_file(args, executableFilenames[0]);
+    }
+
+    return executableFilenames;
 }
 
 int main(int argc, const char* argv[]) {

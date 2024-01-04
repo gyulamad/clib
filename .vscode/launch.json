@@ -9,7 +9,10 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/build",  // Replace with your executable path
+
+            // To run tests:
             "args": ["-i", "./tests/", "-e"],  // Optional: Specify program arguments here
+
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -33,7 +36,7 @@
             "name": "Debug C++ tests",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/tests/tests",  // Replace with your executable path
+            "program": "${workspaceFolder}/build/debug/tests/tests",  // Replace with your executable path
             "args": [],  // Optional: Specify program arguments here
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

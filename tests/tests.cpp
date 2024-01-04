@@ -5,6 +5,7 @@
 #include "clib/LogTests.hpp"
 #include "clib/SysTests.hpp"
 #include "clib/VectorsTests.hpp"
+#include "clib/MapsTests.hpp"
 
 #include "src/CSrcTests.hpp"
 #include "src/IExecTests.hpp"
@@ -47,6 +48,7 @@ int main() {
     SysTests::test(); // TODO
 
     VectorsTests::test(); // TODO
+    MapsTests::test(); // TODO
 
     cout << "Running builder tests..." << endl;
 
@@ -55,7 +57,7 @@ int main() {
 
     // TODO: coverage
 
-    cout << "Tests OK" << endl;
+    cout << COLOR_SUCCESS "Tests OK" COLOR_DEFAULT << endl;
     
     return 0;
 }

@@ -13,7 +13,7 @@
         {
             "label": "build-tests-dbg",
             "type": "shell",
-            "command": "./cleanup.sh && ./build-run.sh -f tests/tests.cpp -d",
+            "command": "./cleanup.sh && ./build-run.sh -i tests/tests.cpp -d",
             "group": {
                 "kind": "build",
                 "isDefault": true

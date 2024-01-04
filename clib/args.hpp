@@ -8,6 +8,8 @@ using namespace std;
 
 namespace clib {
 
+    typedef const string args_key_t;
+    typedef string args_val_t;
     typedef map<const string, string> args_t;
     typedef map<const char, string> args_shortcuts_t;
 
