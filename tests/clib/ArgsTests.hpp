@@ -28,12 +28,16 @@ public:
         const char* argv[] = { "program", "-", "value", nullptr };
         int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
+        bool thrown = false;
         try {
             args_parse(argc, argv);
-            assert(false);  // Should not reach here, an exception is expected
+            // Should not reach here, an exception is expected
         } catch (const exception& e) {
+            thrown = true;
             assert(str_ends_with("Empty argument key", string(e.what())));
         }
+
+        assert(thrown == true);
     }
 
     static void test_args_parse_duplicate_arguments() {
@@ -131,14 +135,17 @@ public:
         const char* argv[] = { "program", "-a", "-valueA", "-b", "--valueB", nullptr };
         int argc = sizeof(argv) / sizeof(argv[0]) - 1;
 
+        bool thrown = false;
         try {
             map<const string, string> result = args_parse(argc, argv);
             // If no exception is thrown, the test has failed
-            assert(false);
         } catch (const exception& e) {
+            thrown = true;
             // Exception expected for invalid key "-valueA"
             assert(str_ends_with("Invalid argument key: -valueA", e.what()));
         }
+
+        assert(thrown == true);
     }
 
     static void test_args_parse_with_whitespaces() {

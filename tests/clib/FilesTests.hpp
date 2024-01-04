@@ -153,13 +153,7 @@ public:
         file_put_contents(filename, expected_content);
 
         // Read the content using file_get_contents
-        string actual_content;
-        try {
-            actual_content = file_get_contents(filename);
-        } catch (const exception& e) {
-            cerr << "Error in testFiles_file_get_contents: " << e.what() << endl;
-            return;
-        }
+        string actual_content = file_get_contents(filename);
 
         // Check if the actual content matches the expected content
         assert(actual_content == expected_content);
@@ -174,12 +168,7 @@ public:
         const string test_content = "This is a test content.";
 
         // Write test content to the file using file_put_contents
-        try {
-            file_put_contents(filename, test_content);
-        } catch (const exception& e) {
-            cerr << "Error in testFiles_file_put_contents: " << e.what() << endl;
-            return;
-        }
+        file_put_contents(filename, test_content);
 
         // Read the content of the file
         ifstream file(filename);
