@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 
 #include "err.hpp"
+#include "sys.hpp"
 
 using namespace std;
 
@@ -105,7 +106,14 @@ namespace clib {
         return fileInfo.st_mtime;
     }
 
-    string file_get_contents(const string& filename) {
+    string getcwd() {
+        return filesystem::current_path().string();
+    }
+
+
+    string file_get_contents(string filename) {
+        if (!file_exists(filename)) 
+            filename = getcwd() + "/" + filename;
         ifstream file(filename);
         if (!file.is_open())
             throw ERROR("Unable to open file for reading: " + filename);

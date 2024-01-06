@@ -13,12 +13,12 @@ using namespace std;
 using namespace clib;
 
 void csrc_collect_deps(
-    string basepath,
+    const string& basepath,
     const string& filename, vector<string>& deps,
     const string& hExtension, const vector<string>& cppExtensions
 ) {
-    if (basepath.empty()) basepath = getcwd();
-    // cout << "Collect dependencies for: " COLOR_FILENAME << basepath + "/" + filename << COLOR_DEFAULT << endl;
+    // if (basepath.empty()) basepath = getcwd();
+    cout << "Collect dependencies for: " COLOR_FILENAME << "[path:" << basepath + "]/" + filename << COLOR_DEFAULT << endl;
     string contents = file_get_contents(basepath + "/" + filename);
     vector<string> lines = str_split("\n", contents);
     vector<vector<string>> line_matches;
@@ -55,13 +55,13 @@ void csrc_collect_deps(
 }
 
 ms_t csrc_get_lst_mtime(
-    string basepath,
+    const string& basepath,
     const string& filename,
     const string& hExtension,
     const vector<string>& cppExtensions,
     vector<string>& dependencies
 ) {
-    if (basepath.empty()) basepath = getcwd();
+    // if (basepath.empty()) basepath = getcwd();
     ms_t lastModAt = file_get_mtime(path_normalize(basepath + "/" + filename));
     csrc_collect_deps(basepath, filename, dependencies, hExtension, cppExtensions);
     for (const string& dependency: dependencies) {
