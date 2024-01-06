@@ -3,6 +3,7 @@
 #include <string>
 
 #include "../clib/args.hpp"
+#include "../clib/sys.hpp"
 
 using namespace std;
 using namespace clib;
@@ -30,6 +31,25 @@ string args_get_output_folder(const args_t& args) {
 string args_get_input_filename(const args_t& args) {
     return path_normalize(__DIR__ + "/../" + args_get(args, "input-filename", "."));
 }
+// string args_get_output_folder(const args_t& args) {
+//     const bool debug = args_get_debug(args);
+//     string cwd = getcwd();
+//     const string defaultOutputFolder = path_normalize(cwd + "/" + string("build/") + (debug ? "debug" : "release"));
+//     string outputFolder = args_get(args, "output-folder", defaultOutputFolder);
+//     if (outputFolder.empty()) return defaultOutputFolder;
+//     if (outputFolder[0] != '/' && outputFolder[0] != '~') 
+//         outputFolder = path_normalize(cwd + "/" + outputFolder);
+//     return outputFolder;
+// }
+
+// string args_get_input_filename(const args_t& args) {
+//     string cwd = getcwd();
+//     string inputFilename = args_get(args, "input-filename", cwd);
+//     if (inputFilename.empty()) return cwd;
+//     if (inputFilename[0] != '/' && inputFilename[0] != '~') 
+//         inputFilename = path_normalize(cwd + "/" + inputFilename);
+//     return inputFilename;
+// }
 
 string args_get_executable_extension(const args_t& args) {
     return args_get(args, "executable-extension", "");

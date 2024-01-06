@@ -81,4 +81,8 @@ namespace clib {
         return pclose(pipe);
     }
 
+    string getcwd() {
+        return filesystem::current_path().string();
+    }
+
 }

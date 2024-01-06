@@ -90,6 +90,56 @@ namespace clib {
         return str.substr(0, end);
     }
 
+    vector<string> str_split(const string& separator, const string& data) {
+        if (data.empty()) return {};
+
+        vector<string> tokens;
+        size_t start = 0, end = 0;
+
+        while ((end = data.find(separator, start)) != string::npos) {
+            tokens.push_back(data.substr(start, end - start));
+            start = end + separator.length();
+        }
+
+        // Add the last token (or the only token if no separator found)
+        tokens.push_back(data.substr(start));
+
+        return tokens;
+    }
+    
+    string str_concat(const vector<string>& strs, const string& sep) {
+        if (strs.empty()) return "";
+        string result = strs[0];
+        for (size_t i = 1; i < strs.size(); ++i) result += sep + strs[i];
+        return result;
+    }
+
+    bool str_contains(const string& needle, const string& haystack) { // TODO: tests
+        // Use find to check if needle is present in haystack
+        return haystack.find(needle) != string::npos;
+    }
+
+    template <typename... Args>
+    string concat(Args... args) {
+        ostringstream stream;
+        (stream << ... << args);
+        return stream.str();
+    }
+
+    bool is_numeric(const string& str) {
+        // Regular expression pattern for numeric strings
+        regex pattern(R"(\s*[-+]?\d+\s*|\s*[-+]?(\d*\.\d+|\d+\.\d*)([eE][-+]?\d+)?\s*)");
+        return regex_match(str, pattern);
+    }
+
+    string str_to_lower(const string& str) {
+        string ret = "";
+        for (size_t i = 0; i < str.length(); i++)
+            if (isupper(str[i])) ret += (char)tolower(str[i]);
+            else ret += str[i];
+        return ret;
+    }
+
     inline int regx_match(
         const string& pattern, 
         const string& str, 
@@ -190,11 +240,8 @@ namespace clib {
         }
 
         // Reconstruct the normalized path
-        string normalized;
-        for (const string& component : components) {
-            if (!normalized.empty()) normalized += "/";
-            normalized += component;
-        }
+        string normalized = ((!filepath.empty() && filepath[0] == '/') ? "/" : "");
+        normalized += str_concat(components, "/");
 
         return normalized;
     }
@@ -229,56 +276,6 @@ namespace clib {
         if (lastSlashPos != string::npos) return filepath.substr(0, lastSlashPos);
         // If there's no directory separator, return an empty string or the whole path, depending on your preference.
         return "";  // Alternatively, you can return filepath;
-    }
-
-    vector<string> str_split(const string& separator, const string& data) {
-        if (data.empty()) return {};
-
-        vector<string> tokens;
-        size_t start = 0, end = 0;
-
-        while ((end = data.find(separator, start)) != string::npos) {
-            tokens.push_back(data.substr(start, end - start));
-            start = end + separator.length();
-        }
-
-        // Add the last token (or the only token if no separator found)
-        tokens.push_back(data.substr(start));
-
-        return tokens;
-    }
-    
-    string str_concat(const vector<string>& strs, const string& sep) {
-        if (strs.empty()) return "";
-        string result = strs[0];
-        for (size_t i = 1; i < strs.size(); ++i) result += sep + strs[i];
-        return result;
-    }
-
-    bool str_contains(const string& needle, const string& haystack) { // TODO: tests
-        // Use find to check if needle is present in haystack
-        return haystack.find(needle) != string::npos;
-    }
-
-    template <typename... Args>
-    string concat(Args... args) {
-        ostringstream stream;
-        (stream << ... << args);
-        return stream.str();
-    }
-
-    bool is_numeric(const string& str) {
-        // Regular expression pattern for numeric strings
-        regex pattern(R"(\s*[-+]?\d+\s*|\s*[-+]?(\d*\.\d+|\d+\.\d*)([eE][-+]?\d+)?\s*)");
-        return regex_match(str, pattern);
-    }
-
-    string str_to_lower(const string& str) {
-        string ret = "";
-        for (size_t i = 0; i < str.length(); i++)
-            if (isupper(str[i])) ret += (char)tolower(str[i]);
-            else ret += str[i];
-        return ret;
     }
 
     bool parse_bool(const string& str) {
