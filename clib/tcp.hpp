@@ -283,7 +283,7 @@ namespace clib {
 
         int poll(int timeout = DEFAULT_POLL_TIMEOUT) {
             int p = TCPSocket::poll(timeout);
-            if (p) accept();
+            if (p) return accept();
             return p;
         }
 
