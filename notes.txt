@@ -3,3 +3,8 @@
 
 # test coverage:
 ./cleanup.sh && ./builder-run.sh -i tests/tests.cpp -e -c
+
+# install as dev-lib
+git clone https://github.com/gyulamad/clib.git
+cd clib 
+./build.sh
