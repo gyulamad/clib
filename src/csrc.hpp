@@ -37,7 +37,12 @@ void csrc_collect_deps(
     //if (!regx_match_all("\\n\\s*\\#include\\s*\"(.*)\"", contents, &matches)) return; //  TODO: bug: it can not see the if the #include in the very first line
     for (const vector<string>& matches: line_matches) {
         for (size_t i = 1; i < matches.size(); i += 2) {
-            string filepath = path_normalize((basepath.empty() ? getcwd() : basepath) + "/" + path_extract(filename) + "/" + matches[i]);
+            string path_extracted = path_extract(filename);
+            string filepath = path_normalize(
+                (basepath.empty() ? "" : basepath + "/") 
+                    + (path_extracted.empty() ? "" : path_extracted + "/")
+                    + matches[i]
+            );
             if (vector_contains(deps, filepath)) continue;
             deps.push_back(filepath);
             if (str_ends_with(file_extension_with_dot(hExtension), filepath)) {
