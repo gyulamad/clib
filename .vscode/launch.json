@@ -8,10 +8,10 @@
             "name": "Debug C++ builder",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/build",  // Replace with your executable path
+            "program": "${workspaceFolder}/build/builder",  // Replace with your executable path
 
             // To run tests:
-            "args": ["-i", "./tests/", "-e"],  // Optional: Specify program arguments here
+            "args": ["-i", "./tests/tests.cpp", "-h", "-e"],  // Optional: Specify program arguments here
 
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
@@ -29,7 +29,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "build-dbg",  // Optional: Specify a task to run before launching the debugger
+            "preLaunchTask": "builder-dbg",  // Optional: Specify a task to run before launching the debugger
             "miDebuggerPath": "gdb"  // Replace with your debugger path (e.g., gdb or lldb)
         },
         {
@@ -54,7 +54,32 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "build-tests-dbg",  // Optional: Specify a task to run before launching the debugger
+            "preLaunchTask": "builder-tests-dbg",  // Optional: Specify a task to run before launching the debugger
+            "miDebuggerPath": "gdb"  // Replace with your debugger path (e.g., gdb or lldb)
+        },
+        {
+            "name": "Debug C++ tests (hppcut)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/build/debug/build/debug/hppcut/tests/tests",  // Replace with your executable path
+            "args": [],  // Optional: Specify program arguments here
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                },
+                {
+                    "text": "set print repeats 0",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "builder-tests-hppcut-dbg",  // Optional: Specify a task to run before launching the debugger
             "miDebuggerPath": "gdb"  // Replace with your debugger path (e.g., gdb or lldb)
         }
     ]

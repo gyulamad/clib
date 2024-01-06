@@ -2,18 +2,27 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "build-dbg",
+            "label": "builder-dbg",
             "type": "shell",
-            "command": "./build-dbg.sh",
+            "command": "./builder-dbg.sh",
             "group": {
                 "kind": "build",
                 "isDefault": true
             }
         },
         {
-            "label": "build-tests-dbg",
+            "label": "builder-tests-dbg",
             "type": "shell",
-            "command": "./cleanup.sh && ./build-run.sh -i tests/tests.cpp -d",
+            "command": "./cleanup.sh && ./builder-run.sh -i tests/tests.cpp -d",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "builder-tests-hppcut-dbg",
+            "type": "shell",
+            "command": "./cleanup.sh && ./builder-run.sh -i tests/tests.cpp -h -d",
             "group": {
                 "kind": "build",
                 "isDefault": true

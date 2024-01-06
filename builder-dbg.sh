@@ -1,10 +1,10 @@
 #!/bin/bash
 unset GTK_PATH
-cppcheck . \
+cppcheck . -ibuild \
     --enable=all \
     --suppress=missingInclude \
     --suppress=useStlAlgorithm \
     --error-exitcode=1 && \
 mkdir -p build && \
-g++ -g -c build.cpp -o build/build.o && \
-g++ -g -o build/build build/build.o
+g++ -g -c builder.cpp -o build/builder.o && \
+g++ -g -o build/builder build/builder.o

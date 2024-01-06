@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include "Printer.hpp"
 #include "time.hpp"
 #include "files.hpp"
@@ -9,21 +10,29 @@ using namespace std;
 
 namespace clib {
 
-    #define LOG(...) logger.date().writeln(__VA_ARGS__)
-    #define LOGE(...) logger.date().writeln(COLOR_ERROR "[ERROR] ", __VA_ARGS__, COLOR_DEFAULT)
-    #define LOGA(...) logger.date().writeln(COLOR_ALERT "[ALERT] ", __VA_ARGS__, COLOR_DEFAULT)   
-    #define LOGW(...) logger.date().writeln(COLOR_WARNING "[WARNING] ", __VA_ARGS__, COLOR_DEFAULT) 
-    #define LOGI(...) logger.date().writeln(COLOR_INFO "[INFO] ", __VA_ARGS__, COLOR_DEFAULT) 
-    #define LOGS(...) logger.date().writeln(COLOR_SUCCESS "[SUCCESS] ", __VA_ARGS__, COLOR_DEFAULT)
+#define LOG(...) Log::getLogger().date().writeln(__VA_ARGS__)
+#define LOGE(...) Log::getLogger().date().writeln(COLOR_ERROR "[ERROR] ", __VA_ARGS__, COLOR_DEFAULT)
+#define LOGA(...) Log::getLogger().date().writeln(COLOR_ALERT "[ALERT] ", __VA_ARGS__, COLOR_DEFAULT)   
+#define LOGW(...) Log::getLogger().date().writeln(COLOR_WARNING "[WARNING] ", __VA_ARGS__, COLOR_DEFAULT) 
+#define LOGI(...) Log::getLogger().date().writeln(COLOR_INFO "[INFO] ", __VA_ARGS__, COLOR_DEFAULT) 
+#define LOGS(...) Log::getLogger().date().writeln(COLOR_SUCCESS "[SUCCESS] ", __VA_ARGS__, COLOR_DEFAULT)
 
-    #define DBG(...) logger.date().writeln(__FILE_LINE__, " ", COLOR_DEBUG, __VA_ARGS__, COLOR_DEFAULT)
+#define DBG(...) Log::getLogger().date().writeln(__FILE_LINE__, " ", COLOR_DEBUG, __VA_ARGS__, COLOR_DEFAULT)
+
+#define LOG_DEFAULT_FILE "app.log"
 
     class Log: public Printer {
     protected:
         string filename;
 
     public:
-        Log(const string& f = "app.log"): Printer(), filename(f) {}
+
+        Log(const string& f = LOG_DEFAULT_FILE): Printer(), filename(f) {}
+
+        static Log getLogger(const string& f = LOG_DEFAULT_FILE) {
+            Log logger(f);
+            return logger;
+        }
 
         Log& date() {
             write(__DATE_TIME__);
@@ -53,6 +62,6 @@ namespace clib {
             file_put_contents(filename, message, true);
         }
 
-    } logger;
+    };// logger;
 
 }

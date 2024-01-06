@@ -16,25 +16,36 @@ void csrc_collect_deps(
     const string& hExtension, const vector<string>& cppExtensions
 ) {
     //cout << "Collect dependencies of: " COLOR_FILENAME << filename << COLOR_DEFAULT << endl;
-    vector<string> matches;
-    string contents = file_get_contents(filename);
-    if (!regx_match_all("\\n\\s*\\#include\\s*\"(.*)\"", contents, &matches)) return;
-    for (size_t i = 1; i < matches.size(); i += 2) {
-        string filepath = path_normalize(basepath + "/" + path_extract(filename) + "/" + matches[i]);
-        if (vector_contains(deps, filepath)) continue;
-        deps.push_back(filepath);
-        if (str_ends_with(hExtension, filepath)) {
-            for (const string& cppExtension: cppExtensions) {
-                string cppFile = file_replace_extension(filepath, cppExtension);
-                if (file_exists(cppFile)) {
-                    if (vector_contains(deps, filepath)) continue;
-                    deps.push_back(cppFile);
+    string contents = file_get_contents(basepath + "/" + filename);
+    vector<string> lines = str_split("\n", contents);
+    vector<vector<string>> line_matches;
+    for (const string& line: lines) {
+        vector<string> matches;
+        if (regx_match("\\s*\\#include\\s*\"(.*)\"", line, &matches))
+            line_matches.push_back(matches);
+    }
+    //if (!regx_match_all("\\n\\s*\\#include\\s*\"(.*)\"", contents, &matches)) return; //  TODO: bug: it can not see the if the #include in the very first line
+    for (const vector<string>& matches: line_matches) {
+        for (size_t i = 1; i < matches.size(); i += 2) {
+            string filepath = path_normalize(basepath + "/" + path_extract(filename) + "/" + matches[i]);
+            if (vector_contains(deps, filepath)) continue;
+            deps.push_back(filepath);
+            if (str_ends_with(file_extension_with_dot(hExtension), filepath)) {
+                for (const string& cppExtension: cppExtensions) {
+                    string cppFile = file_replace_extension(filepath, cppExtension);
+                    if (file_exists(cppFile)) {
+                        if (vector_contains(deps, cppFile)) continue;
+                        deps.push_back(cppFile);
+                    }
                 }
             }
+            csrc_collect_deps(
+                path_extract(filepath), filename_extract(filepath), 
+                deps, hExtension, cppExtensions
+            );
         }
-        csrc_collect_deps(basepath, filepath, deps, hExtension, cppExtensions);
+        vector_unique(deps);
     }
-    vector_unique(deps);
 }
 
 ms_t csrc_get_lst_mtime(
@@ -44,7 +55,7 @@ ms_t csrc_get_lst_mtime(
     const vector<string>& cppExtensions,
     vector<string>& dependencies
 ) {
-    ms_t lastModAt = file_get_mtime(filename);
+    ms_t lastModAt = file_get_mtime(path_normalize(basepath + "/" + filename));
     csrc_collect_deps(basepath, filename, dependencies, hExtension, cppExtensions);
     for (const string& dependency: dependencies) {
         ms_t depLastModAt = file_get_mtime(dependency);

@@ -20,7 +20,6 @@ namespace clib {
         }
 
         virtual ~Printer() {}
-        // virtual void init(void* = nullptr) override {}
     };
 
 }

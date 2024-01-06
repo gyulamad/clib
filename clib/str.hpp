@@ -133,6 +133,32 @@ namespace clib {
 
         return static_cast<int>(matches != nullptr && !matches->empty());
     }
+
+    /**
+     * Replace first regex match in string.
+     * 
+     * @param pattern - regex pattern to match 
+     * @param str - input string
+     * @param replace - string to replace matches with
+     * @return - string with first match replaced
+    */
+    string regx_replace(const string& pattern, const string& str, const string& replace) { // TODO tests
+        regex r(pattern);
+        return regex_replace(str, r, replace);
+    }
+
+    /** 
+     * Replace all regex matches in string.
+     *
+     * @param pattern - regex pattern to match
+     * @param str - input string 
+     * @param replace - string to replace matches with 
+     * @return - string with all matches replaced
+    */
+    string regx_replace_all(const string& pattern, const string& str, const string& replace) { // TODO tests
+        regex r(pattern);
+        return regex_replace(str, r, replace); 
+    }
         
     string normalize_datetime(const string& datetime) {
         string tpl = "0000-01-01 00:00:00.000";
@@ -157,7 +183,7 @@ namespace clib {
                 if (!components.empty() && components.back() != "..")
                     components.pop_back();
                 else components.push_back("..");
-            } else if (token != ".") {
+            } else if (token != "." && token != "") { // TODO: test input: "some//folder///file" => expected: "some/folder/file"
                 // Skip '.' components and add other components
                 components.push_back(token);
             }
@@ -227,6 +253,11 @@ namespace clib {
         string result = strs[0];
         for (size_t i = 1; i < strs.size(); ++i) result += sep + strs[i];
         return result;
+    }
+
+    bool str_contains(const string& needle, const string& haystack) { // TODO: tests
+        // Use find to check if needle is present in haystack
+        return haystack.find(needle) != string::npos;
     }
 
     template <typename... Args>

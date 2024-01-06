@@ -1,5 +1,5 @@
 # build and run tests:
-./cleanup.sh && ./build-run.sh -i ./tests/ -e
+./cleanup.sh && ./builder-run.sh -i tests/tests.cpp -h -e
 
 # test coverage:
-./cleanup.sh && ./build-run.sh -i tests/tests.cpp -e -c
+./cleanup.sh && ./builder-run.sh -i tests/tests.cpp -e -c

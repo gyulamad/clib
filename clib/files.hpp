@@ -100,7 +100,7 @@ namespace clib {
     time_t file_get_mtime(const string& filePath) {
         struct stat fileInfo;
         if (stat(filePath.c_str(), &fileInfo) != 0)
-            throw ERROR("Unable to get file information.");
+            throw ERROR("Unable to get file information: " + filePath);
         
         return fileInfo.st_mtime;
     }
@@ -138,5 +138,28 @@ namespace clib {
 
     bool is_dir(const string& path) {
         return std::filesystem::is_directory(path);
+    }
+
+    void file_copy(const string& fileFrom, const string& fileTo) {
+        // Open the source file for reading
+        ifstream inputFile(fileFrom, ios::binary); // ios::binary ensures correct handling of binary files
+
+        // Check if the source file is open
+        if (!inputFile.is_open())
+            throw ERROR("Error opening source file: " COLOR_FILENAME + fileFrom + COLOR_DEFAULT);
+
+        // Open the destination file for writing
+        ofstream outputFile(fileTo, ios::binary);
+
+        // Check if the destination file is open
+        if (!outputFile.is_open())
+            throw ERROR("Error opening destination file: " COLOR_FILENAME + fileTo + COLOR_DEFAULT);
+
+        // Copy the contents from the source file to the destination file
+        outputFile << inputFile.rdbuf();
+
+        // Close the files
+        inputFile.close();
+        outputFile.close();
     }
 }

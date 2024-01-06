@@ -23,6 +23,7 @@
         "type_traits": "cpp",
         "utility": "cpp",
         "variant": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "system_error": "cpp"
     }
 }
