@@ -18,8 +18,12 @@ void csrc_collect_deps(
     const string& hExtension, const vector<string>& cppExtensions
 ) {
     // if (basepath.empty()) basepath = getcwd();
-    cout << "Collect dependencies for: " COLOR_FILENAME << "[path:" << basepath + "]/" + filename << COLOR_DEFAULT << endl;
-    string contents = file_get_contents(basepath + "/" + filename);
+    cout << "Collect dependencies for: " COLOR_FILENAME << "[path:" << basepath + "]" + filename << COLOR_DEFAULT << endl;
+    string contents = file_get_contents(
+        path_normalize(
+            (basepath.empty() ? getcwd() : basepath) + "/" + filename
+        )
+    );
     vector<string> lines = str_split("\n", contents);
     vector<vector<string>> line_matches;
     for (const string& line: lines) {
@@ -33,7 +37,7 @@ void csrc_collect_deps(
     //if (!regx_match_all("\\n\\s*\\#include\\s*\"(.*)\"", contents, &matches)) return; //  TODO: bug: it can not see the if the #include in the very first line
     for (const vector<string>& matches: line_matches) {
         for (size_t i = 1; i < matches.size(); i += 2) {
-            string filepath = path_normalize(basepath + "/" + path_extract(filename) + "/" + matches[i]);
+            string filepath = path_normalize((basepath.empty() ? getcwd() : basepath) + "/" + path_extract(filename) + "/" + matches[i]);
             if (vector_contains(deps, filepath)) continue;
             deps.push_back(filepath);
             if (str_ends_with(file_extension_with_dot(hExtension), filepath)) {
@@ -62,8 +66,8 @@ ms_t csrc_get_lst_mtime(
     vector<string>& dependencies
 ) {
     // if (basepath.empty()) basepath = getcwd();
-    ms_t lastModAt = file_get_mtime(path_normalize(basepath + "/" + filename));
-    csrc_collect_deps(basepath, filename, dependencies, hExtension, cppExtensions);
+    ms_t lastModAt = file_get_mtime(path_normalize((basepath.empty() ? getcwd() : basepath) + "/" + filename));
+    csrc_collect_deps((basepath.empty() ? getcwd() : basepath), filename, dependencies, hExtension, cppExtensions);
     for (const string& dependency: dependencies) {
         ms_t depLastModAt = file_get_mtime(dependency);
         if (depLastModAt > lastModAt) lastModAt = depLastModAt;
