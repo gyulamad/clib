@@ -29,7 +29,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "builder-dbg",  // Optional: Specify a task to run before launching the debugger
+            "preLaunchTask": "build-dbg",  // Optional: Specify a task to run before launching the debugger
             "miDebuggerPath": "gdb"  // Replace with your debugger path (e.g., gdb or lldb)
         },
         {
@@ -54,7 +54,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "builder-tests-dbg",  // Optional: Specify a task to run before launching the debugger
+            "preLaunchTask": "build-tests-dbg",  // Optional: Specify a task to run before launching the debugger
             "miDebuggerPath": "gdb"  // Replace with your debugger path (e.g., gdb or lldb)
         },
         {
@@ -79,7 +79,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "builder-tests-hppcut-dbg",  // Optional: Specify a task to run before launching the debugger
+            "preLaunchTask": "build-tests-hppcut-dbg",  // Optional: Specify a task to run before launching the debugger
             "miDebuggerPath": "gdb"  // Replace with your debugger path (e.g., gdb or lldb)
         }
     ]
