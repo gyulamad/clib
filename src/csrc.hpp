@@ -2,7 +2,9 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
+#include "../clib/sys.hpp"
 #include "../clib/files.hpp"
 #include "../clib/vectors.hpp"
 #include "../clib/time.hpp"
@@ -11,17 +13,21 @@ using namespace std;
 using namespace clib;
 
 void csrc_collect_deps(
-    const string& basepath,
+    string basepath,
     const string& filename, vector<string>& deps,
     const string& hExtension, const vector<string>& cppExtensions
 ) {
-    //cout << "Collect dependencies of: " COLOR_FILENAME << filename << COLOR_DEFAULT << endl;
+    if (basepath.empty()) basepath = getcwd();
+    // cout << "Collect dependencies for: " COLOR_FILENAME << basepath + "/" + filename << COLOR_DEFAULT << endl;
     string contents = file_get_contents(basepath + "/" + filename);
     vector<string> lines = str_split("\n", contents);
     vector<vector<string>> line_matches;
     for (const string& line: lines) {
         vector<string> matches;
-        if (regx_match("\\s*\\#include\\s*\"(.*)\"", line, &matches))
+        if (
+            regx_match("\\n\\s*\\#include\\s*\"(.*)\"", line, &matches) ||
+            regx_match("^\\s*\\#include\\s*\"(.*)\"", line, &matches)
+        )
             line_matches.push_back(matches);
     }
     //if (!regx_match_all("\\n\\s*\\#include\\s*\"(.*)\"", contents, &matches)) return; //  TODO: bug: it can not see the if the #include in the very first line
@@ -49,12 +55,13 @@ void csrc_collect_deps(
 }
 
 ms_t csrc_get_lst_mtime(
-    const string& basepath,
+    string basepath,
     const string& filename,
     const string& hExtension,
     const vector<string>& cppExtensions,
     vector<string>& dependencies
 ) {
+    if (basepath.empty()) basepath = getcwd();
     ms_t lastModAt = file_get_mtime(path_normalize(basepath + "/" + filename));
     csrc_collect_deps(basepath, filename, dependencies, hExtension, cppExtensions);
     for (const string& dependency: dependencies) {

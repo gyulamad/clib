@@ -739,6 +739,7 @@ void hppcut_file(vector<FileContent>& fileContents, const args_t& args) {
         file_exists(hppcutOutputFolderInputFilename) &&
             file_get_mtime(hppcutOutputFolderInputFilename) >= file_get_mtime(inputFilename)
     );
+    // if (modified) cout << "File modified: " COLOR_FILENAME << inputFilename << COLOR_DEFAULT << endl;
     fileContents.push_back({ 
         hppcutOutputFolderInputFilename, 
         modified ? file_get_contents(inputFilename) : "",

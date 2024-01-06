@@ -70,7 +70,7 @@ string args_get_executable_filename(const args_t& args) {
 }
 
 string args_get_libs(const args_t& args) {
-    return args_get(args, "libs", "-ldl");
+    return args_get(args, "libs", "");
 }
 
 bool args_get_shared(const args_t& args) {
