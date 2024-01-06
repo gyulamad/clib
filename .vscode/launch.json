@@ -12,6 +12,7 @@
 
             // To run tests:
             "args": ["-i", "./tests/tests.cpp", "-h", "-e"],  // Optional: Specify program arguments here
+            //"args": ["-i", "../../server.cpp", "-h", "-e"],
 
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

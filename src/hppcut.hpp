@@ -167,7 +167,10 @@ bool parse_tail_function(
     const string& tail, 
     vector<string>& matches
 ) {
-    return regx_match(r_function, tail, &matches); 
+    // return regx_match(r_function, tail, &matches); 
+    vector<string> splits = str_split(";", tail);
+    if (splits.empty()) return false;
+    return regx_match(r_function, splits[splits.size() - 1], &matches); 
 }
 
 bool is_tail_at_function(
@@ -286,6 +289,7 @@ string remove_func_args_defvals(const string& args) {
 
         if (multiline_comment && str_ends_with("*/", tail)) {
             multiline_comment = false;
+            clean = clean.substr(0, clean.size() - 1); 
             continue;
         }
 
