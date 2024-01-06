@@ -18,7 +18,7 @@ void csrc_collect_deps(
     const string& hExtension, const vector<string>& cppExtensions
 ) {
     // if (basepath.empty()) basepath = getcwd();
-    cout << "Collect dependencies for: " COLOR_FILENAME << "[path:" << basepath + "]" + filename << COLOR_DEFAULT << endl;
+    // cout << "Collect dependencies for: " COLOR_FILENAME << "[path:" << basepath + "]" + filename << COLOR_DEFAULT << endl;
     string contents = file_get_contents(
         path_normalize(
             (basepath.empty() ? getcwd() : basepath) + "/" + filename

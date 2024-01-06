@@ -725,7 +725,7 @@ void hppcut_file(vector<FileContent>& fileContents, const args_t& args) {
         );
 
     vector<string> deps;
-    cout << __FILE_LINE__ << " - inputFilename: " << inputFilename << endl;
+    // cout << __FILE_LINE__ << " - inputFilename: " << inputFilename << endl;
     csrc_collect_deps(
         path_extract(inputFilename), filename_extract(inputFilename), 
         deps, hExtension, cppExtensions
@@ -736,7 +736,7 @@ void hppcut_file(vector<FileContent>& fileContents, const args_t& args) {
     
     // vector<string> hFiles;
     for (const string& hppFile: hppFiles) {
-        cout << __FILE_LINE__ << " - hppFile: " << hppFile << endl;
+        // cout << __FILE_LINE__ << " - hppFile: " << hppFile << endl;
         // hFiles.push_back(
             hppcut_file(fileContents, hppFile, hppcutOutputFolder, hExtension, cppExtensions[0]);
         // );
