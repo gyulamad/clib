@@ -7,6 +7,7 @@
 #include "clib/VectorsTests.hpp"
 #include "clib/MapsTests.hpp"
 #include "clib/ChiperTests.hpp"
+#include "clib/RandTests.hpp"
 
 #include "src/CSrcTests.hpp"
 #include "src/IExecTests.hpp"
@@ -14,6 +15,8 @@
 int main() {
 
     cout << "Runing tests..." << endl;
+
+    RandTests::test(); // TODO
 
     ChiperTests::test_base64();
     ChiperTests::test_rsa();
