@@ -205,8 +205,6 @@ bool is_tail_at_constructor(
     return !clazz.empty() && matches[5] == clazz;
 }
 
-#define R_
-
 bool is_tail_at_destructor(
     const string& tail, 
     const vector<block_level>& levels, 
@@ -255,8 +253,6 @@ string remove_func_qualifier_decl_only_keywords(const string& spec) {
     // Note: add more keyword if necessary...
     return clean;
 }
-
-class SourceCodeTailer {}; // TODO
 
 string remove_func_args_defvals(const string& args) {
     string clean = "";
@@ -404,6 +400,8 @@ void hppcut_file(
 
     const string hppSource = file_get_contents(hppFile);
     
+    bool to_intr = false;
+    bool to_impl = false;
     bool directive = false;
     bool inline_comment = false;
     bool multiline_comment = false;
@@ -415,7 +413,10 @@ void hppcut_file(
     string intr = ""; // .hpp files should have include guard but if not we can make sure to add it here...
     string impl = "#include \"" + filename_extract(hFile) + "\"\n";
     for (const char& c: hppSource) {
-        tail += c;
+        if (to_intr || to_impl) {
+            if (to_intr) intr += c;
+            if (to_impl) impl += c;
+        } else tail += c;
 
         if (!directive && is_tail_at_directive(tail)) {
             directive = true;
@@ -441,7 +442,25 @@ void hppcut_file(
             continue;
         }
 
-        if (inline_comment) continue;
+        if (inline_comment) {
+            if (to_intr && str_ends_with("[hpp-intr-stop]", intr)) {
+                to_intr = false;
+                continue;
+            }
+            if (to_impl && str_ends_with("[hpp-impl-stop]", impl)) {
+                to_impl = false;
+                continue;
+            }
+            if (str_ends_with("[hpp-intr-start]", tail)) {
+                to_intr = true;
+                continue;
+            }
+            if (str_ends_with("[hpp-impl-start]", tail)) {
+                to_impl = true;
+                continue;
+            }
+            continue;
+        }
 
         if (!multiline_comment && str_ends_with("/*", tail)) {
             multiline_comment = true;

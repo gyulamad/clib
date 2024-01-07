@@ -6,7 +6,11 @@ using namespace std;
 
 namespace clib { // TODO: rand-tests (some already in tb-20...1.1.1)
 
+    // [hpp-intr-start] extern mt19937* rand_gen;
+    // [hpp-intr-stop]
+    // [hpp-impl-start]
     mt19937* rand_gen = nullptr;
+    // [hpp-impl-stop]
 
     inline void rand_close() {
         delete rand_gen;
@@ -46,7 +50,7 @@ namespace clib { // TODO: rand-tests (some already in tb-20...1.1.1)
         string ret = "";
         size_t max = chars.size() - 1;
         for (size_t i = 0; i < length; i++)
-            ret += chars[randi(0, max)];
+            ret += chars[(size_t)randi(0, (int)max)];
         return ret;
     }
 
@@ -61,12 +65,12 @@ namespace clib { // TODO: rand-tests (some already in tb-20...1.1.1)
 
     template<typename T>
     vector<T> rand_norm_dist(T mean, T stddev, size_t count) {
-        vector<T> rands;
+        vector<T> randoms;
         random_device rd;
         mt19937 gen(rd());
         normal_distribution<T> dist(mean, stddev);
-        for (size_t i = 0; i < count; i++) rands.push_back(dist(gen));
-        return rands;
+        for (size_t i = 0; i < count; i++) randoms.push_back(dist(gen));
+        return randoms;
     }
 
 }

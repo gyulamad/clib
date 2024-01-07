@@ -52,7 +52,7 @@ namespace clib {
         return string(buffer, (size_t)length);
     }
 
-    void rsa_generate(const char* priv_file, const char* pub_file, int bits = 2048) {
+    void rsa_generate(const string& priv_file, const string& pub_file, int bits = 2048) {
 
         EVP_PKEY* key = EVP_PKEY_new();
 
@@ -73,14 +73,14 @@ namespace clib {
         if (EVP_PKEY_keygen(ctx, &key) <= 0)
             throw ERROR("EVP_PKEY_keygen failed");
 
-        FILE* priv_fp = fopen(priv_file, "wb");
-        if (!priv_fp) throw ERROR(string("Failed to open: ") + priv_file);
+        FILE* priv_fp = fopen(priv_file.c_str(), "wb");
+        if (!priv_fp) throw ERROR("Failed to open: " + priv_file);
 
         PEM_write_PrivateKey(priv_fp, key, NULL, NULL, 0, NULL, NULL);
         fclose(priv_fp);
         
-        FILE* pub_fp = fopen(pub_file, "wb");
-        if (!pub_fp) throw ERROR(string("Failed to open: ") + pub_file);
+        FILE* pub_fp = fopen(pub_file.c_str(), "wb");
+        if (!pub_fp) throw ERROR("Failed to open: " + pub_file);
 
         EVP_PKEY* pub_key = EVP_PKEY_new();
         EVP_PKEY_copy_parameters(pub_key, key);
@@ -96,10 +96,10 @@ namespace clib {
         // Cleanup
     }
 
-    string rsa_encrypt(const string& message, const char* public_key_file) {
+    string rsa_encrypt(const string& message, const string& public_key_file) {
 
-        FILE* f = fopen(public_key_file, "r");
-        if (!f) throw ERROR(string("Failed to open: ") + public_key_file);
+        FILE* f = fopen(public_key_file.c_str(), "r");
+        if (!f) throw ERROR("Failed to open: " + public_key_file);
 
         EVP_PKEY* key = PEM_read_PUBKEY(f, NULL, NULL, NULL);
         
@@ -122,10 +122,10 @@ namespace clib {
     }
 
 
-    string rsa_decrypt(const string& encrypted, const char* private_key_file) {
+    string rsa_decrypt(const string& encrypted, const string& private_key_file) {
 
-        FILE* f = fopen(private_key_file, "r");
-        if (!f) throw ERROR(string("Failed to open: ") + private_key_file);
+        FILE* f = fopen(private_key_file.c_str(), "r");
+        if (!f) throw ERROR("Failed to open: " + private_key_file);
 
         EVP_PKEY* key = PEM_read_PrivateKey(f, NULL, NULL, NULL);
         
@@ -148,11 +148,11 @@ namespace clib {
     }
 
     string encrypt(const string& message, const string& public_key_file) {
-        return base64_encode(rsa_encrypt(message, public_key_file.c_str()));
+        return base64_encode(rsa_encrypt(message, public_key_file));
     }
 
     string decrypt(const string& message, const string& private_key_file) {
-        return rsa_decrypt(base64_decode(message), private_key_file.c_str());
+        return rsa_decrypt(base64_decode(message), private_key_file);
     }
 
 }
