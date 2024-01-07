@@ -281,9 +281,9 @@ namespace clib {
             return remoteSocket;
         }
 
-        int poll(int timeout = DEFAULT_POLL_TIMEOUT) {
+        int poll(int& newSocket, int timeout = DEFAULT_POLL_TIMEOUT) {
             int p = TCPSocket::poll(timeout);
-            if (p) return accept();
+            if (p) return newSocket = accept();
             return p;
         }
 
