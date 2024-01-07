@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/build/builder",  // Replace with your executable path
 
             // To run tests:
-            "args": ["-i", "./tests/tests.cpp", "-h", "-e"],  // Optional: Specify program arguments here
+            "args": ["-i", "./tests/tests.cpp", "-h", "-e", "--libs", " -lcrypto"],  // Optional: Specify program arguments here
             //"args": ["-i", "../../server.cpp", "-h", "-e"],
 
             "stopAtEntry": false,

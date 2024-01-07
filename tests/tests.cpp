@@ -6,6 +6,7 @@
 #include "clib/SysTests.hpp"
 #include "clib/VectorsTests.hpp"
 #include "clib/MapsTests.hpp"
+#include "clib/ChiperTests.hpp"
 
 #include "src/CSrcTests.hpp"
 #include "src/IExecTests.hpp"
@@ -13,6 +14,9 @@
 int main() {
 
     cout << "Runing tests..." << endl;
+
+    ChiperTests::test_base64();
+    ChiperTests::test_rsa();
     
     ArgsTests::test_args_parse_with_shortcuts();
     ArgsTests::test_args_parse_empty_key();

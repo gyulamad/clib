@@ -1,8 +1,8 @@
 # build and run tests:
-./cleanup.sh && ./builder-run.sh -i tests/tests.cpp -h -e
+./cleanup.sh && ./build-run.sh -i tests/tests.cpp -h -e --libs " -lcrypto"
 
 # test coverage:
-./cleanup.sh && ./builder-run.sh -i tests/tests.cpp -e -c
+./cleanup.sh && ./build-run.sh -i tests/tests.cpp -e -c
 
 # install as dev-lib
 git clone https://github.com/gyulamad/clib.git
