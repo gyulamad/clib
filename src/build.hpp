@@ -16,13 +16,13 @@ using namespace clib;
 string get_build_arguments(const args_t& args) {
     const bool debug = args_get_debug(args);
     const bool coverage = args_get_coverage(args);
-    const bool shared = args_get_shared(args);
+    // const bool shared = args_get_shared(args);
     const string flags = args_get_flags(args);
     return flags +
         (debug ? " -g" : "") + 
         (coverage ? " -fprofile-arcs -ftest-coverage" : "") + 
-        ((debug || coverage) ? " -O0" : " -O3") +
-        (shared ? " -shared -fPID" : "");
+        ((debug || coverage) ? " -O0" : " -O3");// +
+        // (shared ? " -shared -fPIC" : "");
 }
 
 string compile_cpp_file(const args_t& args, vector<string>& dependencies) {
@@ -32,6 +32,7 @@ string compile_cpp_file(const args_t& args, vector<string>& dependencies) {
     const string hExtension = args_get_h_extension(args);
     const vector<string> cppExtensions = args_get_cpp_extensions(args);
     const string includePaths = args_get_include_paths(args);
+    const bool shared = args_get_shared(args);
 
     if (inputFilename.empty())
         throw ERROR("Input file is missing");
@@ -45,16 +46,16 @@ string compile_cpp_file(const args_t& args, vector<string>& dependencies) {
     const string outputFilename = path_normalize(outputFolder + "/" +
         file_replace_extension(inputFilename, outputExtension));
 
-    // ms_t lst_mtime = csrc_get_lst_mtime(
-    //     path_extract(inputFilename), filename_extract(inputFilename), 
-    //     hExtension, cppExtensions, dependencies
-    // );
+    ms_t lst_mtime = csrc_get_lst_mtime(
+        path_extract(inputFilename), filename_extract(inputFilename), 
+        hExtension, cppExtensions, dependencies
+    );
     csrc_collect_deps(
         path_extract(inputFilename), filename_extract(inputFilename), 
         dependencies, hExtension, cppExtensions);
 
     if (file_exists(outputFilename) && 
-        file_get_mtime(outputFilename) >= file_get_mtime(inputFilename)
+        file_get_mtime(outputFilename) >= lst_mtime //file_get_mtime(inputFilename)
     ) {
         // cout 
         //     << COLOR_INFO "File already built (skip): "
@@ -72,7 +73,7 @@ string compile_cpp_file(const args_t& args, vector<string>& dependencies) {
 
     if (!iexec(
         "g++ " + arguments + 
-        " -c " + inputFilename + 
+        (shared ? " -shared -fPIC " : " -c ") + inputFilename + 
         " -o " + outputFilename + 
         (includePaths != "" ? " " + includePaths : "")
     )) throw ERROR("Execution failed");
@@ -121,15 +122,19 @@ string build_file(const args_t& args) {
     const bool execute = args_get_execute(args);
     const bool coverage = args_get_coverage(args);
     const vector<string> cppExtensions = args_get_cpp_extensions(args);
+    // const string hppExtension = args_get_hpp_extension(args);
+    const bool shared = args_get_shared(args);
     
     vector<string> dependencies;
     const string outputFilename = compile_cpp_file(args, dependencies);
+    if (shared) return outputFilename;
 
     args_t dep_args = args;
     vector<string> objects;
     for (const string& dependency: dependencies) {
-        if (vector_contains<string>(cppExtensions, file_get_extension(dependency))) {
-            dep_args["input-filename"] = dependency; // !@# TODO: remove default func argument values from cpp files
+        const string extension = file_get_extension(dependency);
+        if (vector_contains<string>(cppExtensions, extension)) {
+            dep_args["input-filename"] = dependency;
             objects.push_back(compile_cpp_file(dep_args, dependencies));
         }
     }
