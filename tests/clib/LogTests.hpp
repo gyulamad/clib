@@ -7,6 +7,7 @@
 #include "../../clib/files.hpp"
 #include "../../clib/Log.hpp"
 
+using namespace std;
 using namespace clib;
 
 class LogTests {

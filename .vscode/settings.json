@@ -72,6 +72,7 @@
         "any": "cpp",
         "unordered_set": "cpp",
         "future": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "cassert": "cpp"
     }
 }

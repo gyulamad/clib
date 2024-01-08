@@ -13,7 +13,7 @@
         {
             "label": "build-tests-dbg",
             "type": "shell",
-            "command": "./cleanup.sh && ./build-run.sh -i tests/tests.cpp -d --libs \" -lcrypto\"",
+            "command": "./cleanup.sh && ./build.sh && ./build/builder -i ./tests/shared -s -d && ./build/builder -i tests/tests.cpp -d --libs \" -lcrypto\"",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -22,7 +22,7 @@
         {
             "label": "build-tests-hppcut-dbg",
             "type": "shell",
-            "command": "./cleanup.sh && ./build-run.sh -i tests/tests.cpp -h -d --libs \" -lcrypto\"",
+            "command": "./cleanup.sh && ./build.sh && ./build/builder -i ./tests/shared -s -h -d && ./build/builder -i tests/tests.cpp -h -d --libs \" -lcrypto\"",
             "group": {
                 "kind": "build",
                 "isDefault": true
