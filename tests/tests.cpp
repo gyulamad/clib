@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "clib/ArgsTests.hpp"
 #include "clib/StrTests.hpp"
 #include "clib/TimeTests.hpp"
@@ -12,9 +14,11 @@
 #include "src/CSrcTests.hpp"
 #include "src/IExecTests.hpp"
 
+using namespace std;
+
 int main() {
 
-    cout << "Runing tests..." << endl;
+    cout << "Running clib tests..." << endl;
 
     RandTests::test(); // TODO
 
@@ -54,7 +58,11 @@ int main() {
 
     SysTests::test(); // TODO
 
-    VectorsTests::test(); // TODO
+    VectorsTests::test_vector_create_destroy();
+    VectorsTests::test_vector_concat();
+    VectorsTests::test_vector_save_and_load();
+    VectorsTests::test_vector_load_and_load_with_reference();
+    
     MapsTests::test(); // TODO
 
     cout << "Running builder tests..." << endl;

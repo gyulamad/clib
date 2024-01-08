@@ -5,6 +5,7 @@
 #include <string>
 
 #include "str.hpp"
+#include "err.hpp"
 
 using namespace std;
 

@@ -232,6 +232,13 @@ const string r_function_spec = R_FUNCTION_SPEC;
 const string r_function_tpl = R_FUNCTION_TPL;
 
 
+string remove_comments(const string& tail) {
+    string clean = tail;
+    clean = regx_replace_all("//[^\\n]*\\n", clean, "");
+    clean = regx_replace_all("/\\*.*\\*/", clean, "");
+    return clean;
+}
+
 vector<string> get_function_spec(const string& tail) {
     vector<string> matches;
     if (!regx_match(r_function_spec, tail, &matches) || matches.size() < 2)
@@ -551,6 +558,10 @@ void hppcut_file(
                 continue;
             }
 
+            // if (hFilename == "tests/clib/VectorsTests.h") {
+            //     cout << hFilename << endl;//
+            // }
+
             if (is_tail_at_function(tail, levels, matches)) {
                 vector<string> tpl = get_function_template(tail);
                 levels.push_back({ block, FUNCTION, tail, matches, !tpl.empty() });
@@ -590,7 +601,9 @@ void hppcut_file(
                         if (splits.size() <= 1) break;
                         tail = splits[splits.size() - 1];
                     }
-                    if (!parse_tail_function(tail, matches))
+
+                    string clean_tail = remove_comments(tail);
+                    if (!parse_tail_function(clean_tail, matches))
                         throw ERROR("Parse error");
 
                     vector<string> classes;
@@ -598,7 +611,7 @@ void hppcut_file(
                         if (level.type == CLASS_STRUCT) 
                             classes.push_back(level.matches[5]); 
 
-                    vector<string> spec = get_function_spec(tail);
+                    vector<string> spec = get_function_spec(clean_tail);
                     string till_funcname_starts = spec[1];
                     string funcname = matches[5];
                     string funcargs = matches[0];
