@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 
+#include "str.hpp"
+
 using namespace std;
 
 namespace clib {

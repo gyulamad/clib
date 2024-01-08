@@ -8,7 +8,6 @@ using namespace std;
 
 namespace clib {
 
-
     template<typename KeyT, typename T>
     bool map_has(const map<KeyT, T>& m, KeyT key) {
         return !m.empty() && m.count(key) > 0;
