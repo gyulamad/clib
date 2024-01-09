@@ -140,7 +140,7 @@ struct block_level {
     block_type type;
     string head;
     vector<string> matches;
-    bool is_template;
+    bool is_template = false;
 };
 
 bool is_tail_at_namespace(
@@ -228,8 +228,18 @@ bool is_tail_at_destructor(
     R_FUNCTION_ARGS \
     "(" R_BLOCK_OPEN ")" "$"
 
+#define R_CLASS_STRUCT_TPL \
+    "(" R_TEMPLATE ")" \
+    R_BOUNDARY \
+    "(class|struct)" \
+    R_BOUNDARY \
+    R_CH_WHITESPACE "+" \
+    "(" R_SYMBOL ")" \
+    R_BLOCK_OPEN "$"
+
 const string r_function_spec = R_FUNCTION_SPEC;
 const string r_function_tpl = R_FUNCTION_TPL;
+const string r_class_struct_tpl = R_CLASS_STRUCT_TPL;
 
 
 string remove_comments(const string& tail) {
@@ -250,6 +260,7 @@ string remove_func_spec_decl_only_keywords(const string& spec) {
     string clean = spec;
     clean = regx_replace_all("\\bvirtual\\b", clean, "");
     clean = regx_replace_all("\\bstatic\\b", clean, "");
+    clean = regx_replace_all("\\binline\\b", clean, "");
     // Note: add more keyword if necessary...
     return clean;  
 }
@@ -360,6 +371,13 @@ vector<string> get_function_template(const string& tail) {
     return matches;
 }
 
+vector<string> get_class_or_struct_template(const string& tail) {
+    vector<string> matches;
+    if (!regx_match(r_class_struct_tpl, tail, &matches) || matches.size() < 2)
+        return {};
+    return matches;
+}
+
 struct FileContent {
     string filename;
     string content;
@@ -374,6 +392,12 @@ struct FileContent {
 
 bool is_tail_at_directive(const string& tail) {
     return regx_match("\\n\\s*\\#$", tail) || regx_match("^\\s*\\#$", tail);
+}
+
+bool is_in_tpl_class_or_struct(const vector<block_level>& levels) {
+    for (const block_level level: levels) 
+        if (level.type == CLASS_STRUCT && level.is_template) return true;
+    return false;
 }
 
 void hppcut_file(
@@ -450,20 +474,28 @@ void hppcut_file(
         }
 
         if (inline_comment) {
-            if (to_intr && str_ends_with("[hpp-intr-stop]", intr)) {
+            const string r_hpp_intr_start = "//\\s*\\[hpp-intr-start\\]$";
+            const string r_hpp_impl_start = "//\\s*\\[hpp-impl-start\\]$";
+            const string r_hpp_intr_stop = "//\\s*\\[hpp-intr-stop\\]$";
+            const string r_hpp_impl_stop = "//\\s*\\[hpp-impl-stop\\]$";
+            if (to_intr && regx_match(r_hpp_intr_stop, intr)) {
                 to_intr = false;
+                intr = regx_replace(r_hpp_intr_stop, intr, "");
                 continue;
             }
-            if (to_impl && str_ends_with("[hpp-impl-stop]", impl)) {
+            if (to_impl && regx_match(r_hpp_impl_stop, impl)) {
                 to_impl = false;
+                impl = regx_replace(r_hpp_impl_stop, impl, "");
                 continue;
             }
-            if (str_ends_with("[hpp-intr-start]", tail)) {
+            if (regx_match(r_hpp_intr_start, tail)) {
                 to_intr = true;
+                tail = regx_replace(r_hpp_intr_start, tail, "");
                 continue;
             }
-            if (str_ends_with("[hpp-impl-start]", tail)) {
+            if (regx_match(r_hpp_impl_start, tail)) {
                 to_impl = true;
+                tail = regx_replace(r_hpp_impl_start, tail, "");
                 continue;
             }
             continue;
@@ -510,7 +542,10 @@ void hppcut_file(
 
         if (c == ';') {
             vector<string> matches;
-            if (is_tail_at_undef_virtual_function(tail, levels, matches)) {
+            if (
+                is_in_tpl_class_or_struct(levels) ||
+                is_tail_at_undef_virtual_function(tail, levels, matches)
+            ) {
 
                 intr += tail; //str_rtrim(tail.substr(0, tail.size() - 1)) + ";";
                 tail = ""; 
@@ -540,6 +575,13 @@ void hppcut_file(
             block++;
             // cout << tail << endl;
 
+
+            if (is_in_tpl_class_or_struct(levels)) {
+                intr += tail;
+                tail = "";
+                continue;
+            }
+
             vector<string> matches;
 
             if (is_tail_at_namespace(tail, levels, matches)) {
@@ -552,7 +594,8 @@ void hppcut_file(
             }
 
             if (is_tail_at_class_or_struct(tail, levels, matches)) {
-                levels.push_back({ block, CLASS_STRUCT, tail, matches });
+                vector<string> tpl = get_class_or_struct_template(tail);
+                levels.push_back({ block, CLASS_STRUCT, tail, matches, !tpl.empty() });
                 intr += tail;  
                 tail = "";  
                 continue;
@@ -675,6 +718,13 @@ void hppcut_file(
             if (lst_level.level == block) 
                 levels.pop_back();
             block--;  
+
+
+            if (is_in_tpl_class_or_struct(levels)) {
+                intr += tail;
+                tail = "";
+                continue;
+            }
 
             // cout << endl << endl << endl << endl;
             // cout << "***************************************************************" << endl;

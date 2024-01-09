@@ -3,6 +3,7 @@
 #include <cassert>
 
 #include "../../clib/sys.hpp"
+#include "../../clib/str.hpp"
 
 using namespace std;
 using namespace clib;

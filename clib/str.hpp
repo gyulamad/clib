@@ -140,7 +140,7 @@ namespace clib {
         return ret;
     }
 
-    inline int regx_match(
+    int regx_match(
         const string& pattern, 
         const string& str, 
         vector<string>* matches = nullptr
@@ -159,7 +159,7 @@ namespace clib {
         return 0;
     }
 
-    inline int regx_match_all(
+    int regx_match_all(
         const string& pattern,
         const string& str,
         vector<string>* matches = nullptr

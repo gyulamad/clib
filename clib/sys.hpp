@@ -11,8 +11,19 @@ using namespace std;
 
 namespace clib {
 
+    // [hpp-intr-start] extern int exec_last_exit_status;
+    // [hpp-intr-stop]
+    // [hpp-impl-start]
     int exec_last_exit_status = 0;
+    // [hpp-impl-stop]
+
+    // [hpp-intr-start] extern int exec_last_exit_code;
+    // [hpp-intr-stop]
+    // [hpp-impl-start]
     int exec_last_exit_code = 0;
+    // [hpp-impl-stop]
+
+
     string exec(const string& command, bool captureOutput = true, bool showOutput = false) {        
         exec_last_exit_status = 0;
         exec_last_exit_code = 0;

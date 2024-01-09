@@ -1,3 +1,6 @@
+# build shared libs:
+./build/builder -i ./tests/shared -s
+
 # build and run tests:
 ./cleanup.sh && ./build-run.sh -i tests/tests.cpp -h -e --libs " -lcrypto"
 
