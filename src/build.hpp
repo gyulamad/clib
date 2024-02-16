@@ -16,10 +16,12 @@ using namespace clib;
 string get_build_arguments(const args_t& args) {
     const bool debug = args_get_debug(args);
     const bool coverage = args_get_coverage(args);
+    // const bool hpp_cut = args_get_hpp_cut(args);
     // const bool shared = args_get_shared(args);
     const string flags = args_get_flags(args);
     return flags +
-        (debug ? " -g -DDEBUG " : "") + 
+        // (debug ? " -g -DDEBUG " : "") + 
+        // (hpp_cut ? " -DHPPCUT " : "") +
         (coverage ? " -fprofile-arcs -ftest-coverage" : "") + 
         ((debug || coverage) ? " -O0" : " -O3");// +
         // (shared ? " -shared -fPIC" : "");

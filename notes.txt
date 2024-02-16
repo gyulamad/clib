@@ -1,10 +1,13 @@
+# build the builder itself:
+./build.sh
+
 # build shared libs:
 ./build/builder -i ./tests/shared -s
 
-# build and run tests:
+# build and run tests: (deprecated, use ./build/builder instead ./build-run.sh)
 ./cleanup.sh && ./build-run.sh -i tests/tests.cpp -h -e --libs " -lcrypto"
 
-# test coverage:
+# test coverage: (deprecated, use ./build/builder instead ./build-run.sh)
 ./cleanup.sh && ./build-run.sh -i tests/tests.cpp -e -c
 
 # install as dev-lib

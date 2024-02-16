@@ -32,7 +32,7 @@ int main(int argc, const char* argv[]) {
         args_t build_args = args;
         if (hpp_cut) {
             hppcut(args); // TODO: do not override .h and .cpp files if already exists and newer that the source files
-            build_args["input-filename"] = path_normalize(outputFolder + "/" + hppCutFolder + "/" + inputFilename);
+            build_args["input-filename"] = path_normalize(/*outputFolder + "/" + */hppCutFolder + "/" + inputFilename);
         }
         if (!no_build) build(build_args);
         

@@ -1,6 +1,6 @@
 #!/bin/bash
 unset GTK_PATH
-cppcheck . -ibuild -itests/shared \
+cppcheck . -ibuild -ihppcut -itests/shared \
     --enable=all \
     --suppress=missingInclude \
     --suppress=useStlAlgorithm \

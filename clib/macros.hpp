@@ -79,10 +79,4 @@ namespace clib {
 #define QUOTEME_1(x) #x
 #define QUOTEME(x) QUOTEME_1(x)
 
-#ifdef DEBUG
-    #define __BUILD_DIR__ "build/debug/"
-#else
-    #define __BUILD_DIR__ "build/release/"
-#endif
-
 }

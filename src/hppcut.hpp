@@ -802,7 +802,7 @@ void hppcut_file(vector<FileContent>& fileContents, const args_t& args) {
     const string hppExtension = args_get_hpp_extension(args);
     const string outputFolder = args_get_output_folder(args);
     const string hppCutFolder = args_get_hpp_cut_folder(args);
-    const string hppcutOutputFolder = path_normalize(outputFolder + "/" + hppCutFolder);
+    // const string hppcutOutputFolder = path_normalize(outputFolder + "/" + hppCutFolder);
 
     if (!vector_contains(cppExtensions, file_get_extension(inputFilename)))
         throw ERROR(
@@ -824,12 +824,12 @@ void hppcut_file(vector<FileContent>& fileContents, const args_t& args) {
     for (const string& hppFile: hppFiles) {
         // cout << __FILE_LINE__ << " - hppFile: " << hppFile << endl;
         // hFiles.push_back(
-            hppcut_file(fileContents, hppFile, hppcutOutputFolder, hExtension, cppExtensions[0]);
+            hppcut_file(fileContents, hppFile, /*hppcutOutputFolder*/hppCutFolder, hExtension, cppExtensions[0]);
         // );
     }
     // return hFiles;
 
-    const string hppcutOutputFolderInputFilename = hppcutOutputFolder + "/" + inputFilename;
+    const string hppcutOutputFolderInputFilename = /*hppcutOutputFolder*/hppCutFolder + "/" + inputFilename;
     const bool modified = !(
         file_exists(hppcutOutputFolderInputFilename) &&
             file_get_mtime(hppcutOutputFolderInputFilename) >= file_get_mtime(inputFilename)

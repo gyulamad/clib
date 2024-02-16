@@ -1,4 +1,5 @@
 build/*
+hppcut/*
 *.o
 *.gcov
 coverage.info
